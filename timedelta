@@ -2,24 +2,30 @@
 
 # echo $(( ($(date +%s) - $(date --date="Jul 20, 1969" +%s) )/(60*60*24) ))
 
+called_as=`basename $0`
+
+if [ $# != 2 ]; then
+    echo usage: $called_as time-expression-1 time-expression-2
+    echo example: $called_as '"Jul 20, 1969"' now
+    exit 1
+fi
+
 i=0
 while [ -n "$1" ]; do
-    D=""
     case $1 in
 	'-s')
 	    ;;
 	now|NOW|Now)
-	    DATE[$i]=""
+	    DATE[$i]="$(date)"
 	    ;;
 	*)
 	    DATE[$i]="$1"
-	    D="--date"
 	    ;;
     esac
     (( i++ ))
     shift
 done
 
-DELTAtm=$(( ($(date $D "${DATE[0]}" +%s) - $(date $D "${DATE[1]}" +%s)) / (60*60*24) ))
+DELTAtm=$(( ($(date +%s --date "${DATE[0]}") - $(date +%s --date "${DATE[1]}")) / (60*60*24) ))
 
 echo $DELTAtm
